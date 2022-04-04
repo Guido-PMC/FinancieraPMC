@@ -29,7 +29,7 @@ def sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente):
         message = client.messages \
             .create(
                 from_='whatsapp:+16625025249',
-                body=f"Hola! Queremos comentarte lo siguiente: Se ha realizado una operación de cambio en PMC. Vendedor: {vendedor} Cliente: {cliente} Tipo: {tipo} Monto: {monto} Cotización: {cotizacion} Fondos USD: Fondos Fondos ARS: Fondos Fecha: {fecha} Saludos!",
+                body=f"Hola! Queremos comentarte lo siguiente: \nSe ha realizado una operación de cambio en PMC. \nVendedor: {vendedor} - Cliente: {cliente} \nTipo: {tipo} Monto: {monto} Cotización: {cotizacion} \n*Fondos USD: Fondos Fondos ARS: Fondos* \nFecha: {fecha} \nSaludos!",
                 to=f'whatsapp:+{sender}'
             )
 
@@ -69,7 +69,7 @@ def ventaCommand(update: Update, context: CallbackContext):
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera")
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
-def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksheet):
+def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksheet,update,context):
     print(f"Fecha: {fecha}, Tipo: {tipo}, Vendedor: {vendedor}, Monto: {monto}, Cotizacion:{cotizacion}, Cliente: {cliente}  ")
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
     creds = ServiceAccountCredentials.from_json_keyfile_name('pilarminingco-c11e8da70b2f.json', scope)
@@ -80,8 +80,11 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
         spread = (int(getDolarBlue("avg")))-int(cotizacion)
     if (tipo == "venta"):
         spread = (int(cotizacion)-int(getDolarBlue("avg")))
-    new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, int(monto)*int(cotizacion), spread, spread*int(monto),getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
+    ganancia = spread*int(monto)
+    new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, int(monto)*int(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
     sheet_instance.append_row(new_row, value_input_option="USER_ENTERED")
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Transaccion cargada con exito - Ganancia ${ganancia}")
+
 
 
 
