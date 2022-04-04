@@ -55,7 +55,7 @@ def compraCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1]
     cotizacion = string.split(None,3)[2]
     cliente = string.split(None,3)[3]
-    updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera")
+    updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
 def ventaCommand(update: Update, context: CallbackContext):
@@ -66,7 +66,7 @@ def ventaCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1]
     cotizacion = string.split(None,3)[2]
     cliente = string.split(None,3)[3]
-    updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera")
+    updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
 def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksheet,update,context):
