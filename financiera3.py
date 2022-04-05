@@ -5,8 +5,17 @@ from requests import *
 from datetime import datetime
 import gspread
 import requests
+import os
 from oauth2client.service_account import ServiceAccountCredentials
 from twilio.rest import Client as ClientTwilio
+
+
+if "DOCKER" in os.environ['ENVIRONMENT']:
+    credenciales = 'app/pilarminingco-c11e8da70b2f.json'
+if "TEST" in os.environ['ENVIRONMENT']:
+    credenciales = 'pilarminingco-c11e8da70b2f.json'
+if "PROD" in os.environ['ENVIRONMENT']:
+    credenciales = '/home/PMC/AutomatismosPMC/pilarminingco-c11e8da70b2f.json'
 
 class operacion:
     def __init__(self, fecha, tipo, vendedor, monto, cotizacion, cliente ):
@@ -72,7 +81,7 @@ def ventaCommand(update: Update, context: CallbackContext):
 def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksheet,update,context):
     print(f"Fecha: {fecha}, Tipo: {tipo}, Vendedor: {vendedor}, Monto: {monto}, Cotizacion:{cotizacion}, Cliente: {cliente}  ")
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('pilarminingco-c11e8da70b2f.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name(credenciales, scope)
     client = gspread.authorize(creds)
     work_sheet = client.open(sheet)
     sheet_instance = work_sheet.worksheet(worksheet)
