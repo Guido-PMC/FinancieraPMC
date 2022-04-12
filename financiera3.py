@@ -86,11 +86,11 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
     work_sheet = client.open(sheet)
     sheet_instance = work_sheet.worksheet(worksheet)
     if (tipo == "compra"):
-        spread = (int(getDolarBlue("avg")))-int(cotizacion)
+        spread = (float(getDolarBlue("avg")))-float(cotizacion)
     if (tipo == "venta"):
-        spread = (int(cotizacion)-int(getDolarBlue("avg")))
-    ganancia = spread*int(monto)
-    new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, int(monto)*int(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
+        spread = (float(cotizacion)-float(getDolarBlue("avg")))
+    ganancia = spread*float(monto)
+    new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, float(monto)*float(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
     sheet_instance.append_row(new_row, value_input_option="USER_ENTERED")
     context.bot.send_message(chat_id=update.effective_chat.id, text=f"Transaccion cargada con exito - Ganancia ${ganancia}")
 
