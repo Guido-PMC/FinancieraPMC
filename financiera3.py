@@ -61,8 +61,8 @@ def compraCommand(update: Update, context: CallbackContext):
     fecha = datetime.today().strftime('%d-%m-%Y')
     tipo = string.split(None,3)[0][1:]
     vendedor = update.effective_chat.first_name
-    monto = string.split(None,3)[1]
-    cotizacion = string.split(None,3)[2]
+    monto = string.split(None,3)[1].replace(",",".")
+    cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
@@ -72,8 +72,8 @@ def ventaCommand(update: Update, context: CallbackContext):
     fecha = datetime.today().strftime('%d-%m-%Y')
     tipo = string.split(None,3)[0][1:]
     vendedor = update.effective_chat.first_name
-    monto = string.split(None,3)[1]
-    cotizacion = string.split(None,3)[2]
+    monto = string.split(None,3)[1].replace(",",".")
+    cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
