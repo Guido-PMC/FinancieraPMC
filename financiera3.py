@@ -28,7 +28,7 @@ class operacion:
 
 def updateCell(documento, hoja, cell, data):
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('/home/PMC/AutomatismosPMC/pilarminingco-c11e8da70b2f.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name(credenciales, scope)
     client = gspread.authorize(creds)
     sheet = client.open(documento)
     sheet_instance = sheet.worksheet(hoja)
@@ -36,7 +36,7 @@ def updateCell(documento, hoja, cell, data):
 
 def getCellByRow(sheet, worksheet, row):
     scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-    creds = ServiceAccountCredentials.from_json_keyfile_name('/home/PMC/AutomatismosPMC/pilarminingco-c11e8da70b2f.json', scope)
+    creds = ServiceAccountCredentials.from_json_keyfile_name(credenciales, scope)
     client = gspread.authorize(creds)
     work_sheet = client.open(sheet)
     sheet_instance = work_sheet.worksheet(worksheet)
