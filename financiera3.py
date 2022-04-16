@@ -64,6 +64,7 @@ def compraCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1].replace(",",".")
     cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
+    sendResponse(monto, cotizacion, update,context)
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
@@ -75,8 +76,48 @@ def ventaCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1].replace(",",".")
     cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
+    sendResponse(monto, cotizacion, update,context)
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
+
+def subimosCommand(update: Update, context: CallbackContext):
+    string = update.message.text
+    fecha = datetime.today().strftime('%d-%m-%Y')
+    tipo = string.split(None,3)[0][1:]
+    vendedor = update.effective_chat.first_name
+    monto = string.split(None,3)[1].replace(",",".")
+    cotizacion = string.split(None,3)[2].replace(",",".")
+    cliente = string.split(None,3)[3]
+    sendResponse(monto, cotizacion, update,context)
+    updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
+    sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
+
+
+def bajamosCommand(update: Update, context: CallbackContext):
+    string = update.message.text
+    fecha = datetime.today().strftime('%d-%m-%Y')
+    tipo = string.split(None,3)[0][1:]
+    vendedor = update.effective_chat.first_name
+    monto = string.split(None,3)[1].replace(",",".")
+    cotizacion = string.split(None,3)[2].replace(",",".")
+    cliente = string.split(None,3)[3]
+    sendResponse(monto, cotizacion, update,context)
+    updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
+    sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
+
+def sendResponse(monto, cotizacion, update,context):
+    if "compra" in "tipo":
+        billete = float(monto) * float(cotizacion)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos USD {str(monto)} - Entregamos ARS ${billete}")
+    if "venta" in "tipo":
+        billete = float(monto) * float(cotizacion)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos ARS {str(monto)} - Entregamos USD {billete}")
+    if "subimos" in "tipo":
+        billete = float(monto) - (float(monto) * float(cotizacion)/100)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"Subimos USDT {str(monto)} - Entregamos USD {billete}")    
+    if "bajamos" in "tipo":
+        billete = float(monto) - (float(monto) * float(cotizacion)/100)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=f"Bajamos USDT {str(monto)} - Entregamos USDT {billete}")
 
 def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksheet,update,context):
     print(f"Fecha: {fecha}, Tipo: {tipo}, Vendedor: {vendedor}, Monto: {monto}, Cotizacion:{cotizacion}, Cliente: {cliente}  ")
@@ -90,7 +131,10 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
     if (tipo == "venta"):
         spread = (float(cotizacion)-float(getDolarBlue("avg")))
     ganancia = spread*float(monto)
-    new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, float(monto)*float(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
+    if "compra" or "venta" in tipo:
+        new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, float(monto)*float(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
+    if "subida" or "bajada" in tipo:
+        new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, float(monto)*float(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"), cotizacion)
     sheet_instance.append_row(new_row, value_input_option="USER_ENTERED")
     context.bot.send_message(chat_id=update.effective_chat.id, text=f"Transaccion cargada con exito - Ganancia ${ganancia}")
 
@@ -100,5 +144,8 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
 dispatcher.add_handler(CommandHandler("start", startCommand))
 dispatcher.add_handler(CommandHandler("Compra", compraCommand))
 dispatcher.add_handler(CommandHandler("Venta", ventaCommand))
+dispatcher.add_handler(CommandHandler("subimos", subimosCommand))
+dispatcher.add_handler(CommandHandler("bajamos", bajamosCommand))
+
 
 updater.start_polling()
