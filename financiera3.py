@@ -130,6 +130,11 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
         spread = (float(getDolarBlue("avg")))-float(cotizacion)
     if (tipo == "venta"):
         spread = (float(cotizacion)-float(getDolarBlue("avg")))
+    if (tipo == "subida"):
+        spread = 4
+    if (tipo == "bajada"):
+        spread = 4
+    
     ganancia = spread*float(monto)
     if "compra" or "venta" in tipo:
         new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, float(monto)*float(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
