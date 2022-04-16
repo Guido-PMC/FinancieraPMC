@@ -26,8 +26,26 @@ class operacion:
         self.cotizacion = cotizacion
         self.cliente = cliente
 
+def updateCell(documento, hoja, cell, data):
+    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('/home/PMC/AutomatismosPMC/pilarminingco-c11e8da70b2f.json', scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(documento)
+    sheet_instance = sheet.worksheet(hoja)
+    sheet_instance.update(cell, data,value_input_option="USER_ENTERED")
+
+def getCellByRow(sheet, worksheet, row):
+    scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
+    creds = ServiceAccountCredentials.from_json_keyfile_name('/home/PMC/AutomatismosPMC/pilarminingco-c11e8da70b2f.json', scope)
+    client = gspread.authorize(creds)
+    work_sheet = client.open(sheet)
+    sheet_instance = work_sheet.worksheet(worksheet)
+    val = sheet_instance.acell(row).value
+    return (val)
+
 updater = Updater(token="5124513220:AAGh3zhe36hP7dt9iMBzomiKWiyV4o47VHc")
 dispatcher = updater.dispatcher
+
 
 def sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente):
     lista_senders=['5491130252911','5491121708911']
@@ -131,10 +149,15 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
     if (tipo == "venta"):
         spread = (float(cotizacion)-float(getDolarBlue("avg")))
     if (tipo == "subimos"):
-        spread = 4
+        puntaBajamos = getCellByRow("P2")
+        puntaSubimos = getCellByRow("P4")
+        avg = (float(puntaSubimos) - float(puntaBajamos) )/2
+        spread = (float(cotizacion) - float(avg))
     if (tipo == "bajamos"):
-        spread = 4
-    
+        puntaBajamos = getCellByRow("P2")
+        puntaSubimos = getCellByRow("P4")
+        avg = (float(puntaSubimos) - float(puntaBajamos) )/2
+        spread = (float(avg) - float(cotizacion))
     ganancia = spread*float(monto)
     if "compra" or "venta" in tipo:
         new_row = (fecha, tipo, vendedor, cliente, monto, cotizacion, float(monto)*float(cotizacion), spread, ganancia,getDolarBlue("buy"),getDolarBlue("sell"),getDolarBlue("avg"))
@@ -145,12 +168,28 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
 
 
 
+def puntaBajamos(update,context):
+    string = update.message.text
+    fecha = datetime.today().strftime('%d-%m-%Y')
+    valor = string.split(None,2)[1]
+    updateCell("Pilar Mining CO","Financiera","O2",fecha)
+    updateCell("Pilar Mining CO","Financiera","P2",valor)
+
+def puntaSubimos(update,context):
+    string = update.message.text
+    fecha = datetime.today().strftime('%d-%m-%Y')
+    valor = string.split(None,2)[1]
+    updateCell("Pilar Mining CO","Financiera","O4",fecha)
+    updateCell("Pilar Mining CO","Financiera","P4",valor)
+
 
 dispatcher.add_handler(CommandHandler("start", startCommand))
 dispatcher.add_handler(CommandHandler("Compra", compraCommand))
 dispatcher.add_handler(CommandHandler("Venta", ventaCommand))
 dispatcher.add_handler(CommandHandler("subimos", subimosCommand))
 dispatcher.add_handler(CommandHandler("bajamos", bajamosCommand))
+dispatcher.add_handler(CommandHandler("puntaBajamos", puntaBajamos))
+dispatcher.add_handler(CommandHandler("puntaSubimos", puntaSubimos))
 
 
 updater.start_polling()
