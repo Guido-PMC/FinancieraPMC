@@ -130,9 +130,9 @@ def updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, sheet, worksh
         spread = (float(getDolarBlue("avg")))-float(cotizacion)
     if (tipo == "venta"):
         spread = (float(cotizacion)-float(getDolarBlue("avg")))
-    if (tipo == "subida"):
+    if (tipo == "subimos"):
         spread = 4
-    if (tipo == "bajada"):
+    if (tipo == "bajamos"):
         spread = 4
     
     ganancia = spread*float(monto)
