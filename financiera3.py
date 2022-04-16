@@ -106,6 +106,7 @@ def bajamosCommand(update: Update, context: CallbackContext):
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
 def sendResponse(monto, cotizacion, update,context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos USD {monto} - Entregamos ARS ${billete}")
     if "compra" in "tipo":
         billete = float(monto) * float(cotizacion)
         context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos USD {str(monto)} - Entregamos ARS ${billete}")
