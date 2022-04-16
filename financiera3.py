@@ -64,7 +64,7 @@ def compraCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1].replace(",",".")
     cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
-    sendResponse(monto, cotizacion, update,context)
+    sendResponse(monto, cotizacion, tipo, update,context)
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
@@ -76,7 +76,7 @@ def ventaCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1].replace(",",".")
     cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
-    sendResponse(monto, cotizacion, update,context)
+    sendResponse(monto, cotizacion, tipo, update,context)
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
@@ -88,7 +88,7 @@ def subimosCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1].replace(",",".")
     cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
-    sendResponse(monto, cotizacion, update,context)
+    sendResponse(monto, cotizacion, tipo, update,context)
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
@@ -101,22 +101,21 @@ def bajamosCommand(update: Update, context: CallbackContext):
     monto = string.split(None,3)[1].replace(",",".")
     cotizacion = string.split(None,3)[2].replace(",",".")
     cliente = string.split(None,3)[3]
-    sendResponse(monto, cotizacion, update,context)
+    sendResponse(monto, cotizacion, tipo, update,context)
     updateSheet(fecha, tipo, vendedor, monto, cotizacion, cliente, "Pilar Mining CO", "Financiera",update,context)
     sendTwilio(fecha, tipo, vendedor, monto, cotizacion, cliente)
 
-def sendResponse(monto, cotizacion, update,context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos USD {monto} - Entregamos ARS ${billete}")
-    if "compra" in "tipo":
+def sendResponse(monto, cotizacion, tipo, update,context):
+    if "compra" in tipo:
         billete = float(monto) * float(cotizacion)
         context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos USD {str(monto)} - Entregamos ARS ${billete}")
-    if "venta" in "tipo":
+    if "venta" in tipo:
         billete = float(monto) * float(cotizacion)
         context.bot.send_message(chat_id=update.effective_chat.id, text=f"Compramos ARS {str(monto)} - Entregamos USD {billete}")
-    if "subimos" in "tipo":
+    if "subimos" in tipo:
         billete = float(monto) - (float(monto) * float(cotizacion)/100)
         context.bot.send_message(chat_id=update.effective_chat.id, text=f"Subimos USDT {str(monto)} - Entregamos USD {billete}")    
-    if "bajamos" in "tipo":
+    if "bajamos" in tipo:
         billete = float(monto) - (float(monto) * float(cotizacion)/100)
         context.bot.send_message(chat_id=update.effective_chat.id, text=f"Bajamos USDT {str(monto)} - Entregamos USDT {billete}")
 
