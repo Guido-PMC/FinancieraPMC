@@ -174,6 +174,8 @@ def puntaBajamos(update,context):
     valor = string.split(None,2)[1]
     updateCell("Pilar Mining CO","Financiera","O2",fecha)
     updateCell("Pilar Mining CO","Financiera","P2",valor)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Actualizada la bajada {valor}")
+
 
 def puntaSubimos(update,context):
     string = update.message.text
@@ -181,6 +183,7 @@ def puntaSubimos(update,context):
     valor = string.split(None,2)[1]
     updateCell("Pilar Mining CO","Financiera","O4",fecha)
     updateCell("Pilar Mining CO","Financiera","P4",valor)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Actualizada la subida {valor}")
 
 
 dispatcher.add_handler(CommandHandler("start", startCommand))
